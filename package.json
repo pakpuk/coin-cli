@@ -1,0 +1,16 @@
+{
+  "name": "coin-cli",
+  "version": "1.0.0",
+  "description": "Print the top cryptocurrencies by market cap from CoinGecko",
+  "type": "module",
+  "main": "index.js",
+  "bin": {
+    "coin-cli": "index.js"
+  },
+  "scripts": {
+    "start": "node index.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
