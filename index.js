@@ -4,21 +4,38 @@
  * Fetches the top cryptocurrencies by market cap from CoinGecko
  * and prints them as a table: name, current price, 24h change.
  *
- * Usage: node index.js
+ * Usage: node index.js [count]
+ *   count  Number of coins to show (1–250, default 5).
  * Requires Node 18+ (built-in fetch).
  */
 
 import { fetchTopCoins } from './src/api.js';
 import { renderCoinTable } from './src/table.js';
 
+const DEFAULT_LIMIT = 5;
+const MAX_LIMIT = 250; // CoinGecko's maximum per_page value.
+
 const CONFIG = {
   currency: 'usd',
-  limit: 5,
+  limit: DEFAULT_LIMIT,
   timeoutMs: 10_000,
 };
 
+/**
+ * Parses the optional coin count argument.
+ * Returns the default when it is absent; throws on anything that isn't 1–MAX_LIMIT.
+ */
+function parseLimit(arg) {
+  if (arg === undefined) return DEFAULT_LIMIT;
+  if (!/^\d+$/.test(arg) || Number(arg) < 1 || Number(arg) > MAX_LIMIT) {
+    throw new Error(`Invalid count "${arg}": expected a whole number from 1 to ${MAX_LIMIT}.\nUsage: node index.js [count]`);
+  }
+  return Number(arg);
+}
+
 async function main() {
   try {
+    CONFIG.limit = parseLimit(process.argv[2]);
     const coins = await fetchTopCoins(CONFIG);
     const currency = CONFIG.currency.toUpperCase();
 
